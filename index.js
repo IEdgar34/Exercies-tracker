@@ -20,7 +20,7 @@ const userSchema =  new mongoose.Schema({
   /* description: { type: String }, 
   duration: { type: Number }, 
   date: { type:String} */
-  logs: {type : Array}
+  log: {type : Array}
   
 },{ strict: false })
 //модель по схеме
@@ -63,7 +63,7 @@ const User = mongoose.model("user",userSchema)
         }
        
         User.findById(id).then((response) => {
-            response.logs.push({
+            response.log.push({
                 description: description,
                 duration: duration,
                 date: date,
@@ -86,9 +86,31 @@ const User = mongoose.model("user",userSchema)
 
     app.get("/api/users/:_id/logs",(req,res) => {
         let id = req.params._id;
+        let {from,to,limit} = req.query
+        let fromDate = from ? new Date(from): null
+        let toDate = to ? new Date(to): null
+
         User.findById(id).then((response) => {
+          
+            let c = response.log.filter((log) => {
+                let logDate = new Date(log.date)
+                return (!fromDate || logDate >= fromDate) && (!toDate || logDate <= toDate)
+            })
+            if(limit){
+
+              c = c.slice(0, Number(limit))
+            }
+         
+        
             response = response.toObject()
-            res.send(Object.assign(response,{count:response.logs.length}))
+            response["log"] = c
+            res.send(Object.assign(response,{count:response.log.length}))
+         
+            
+
+
+            
+            
         }).catch((err) => console.log(err))
     })
 const listener = app.listen(process.env.PORT || 3000, () => {
