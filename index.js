@@ -76,12 +76,15 @@ const User = mongoose.model("user",userSchema)
                 duration: duration,
                 date: date,
             })
-            res.send(Object.assign({_id:response._id,username:response.username},{
+            
+            response.save().then((resp) => console.log(resp))
+            res.send({
+                username:response.username,
                 description: description,
                 duration: duration,
                 date: date,
-            }))
-            response.save().then((resp) => console.log(resp))
+                _id:response._id
+            })
           
         }).catch((err) => console.log(err))
       
