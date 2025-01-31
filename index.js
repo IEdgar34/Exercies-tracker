@@ -84,9 +84,12 @@ const User = mongoose.model("user",userSchema)
     })
 
 
-   /*  app.get("/api/users/:_id/logs",(req,res) => {
-
-    }) */
+    app.get("/api/users/:_id/logs",(req,res) => {
+        let id = req.params._id;
+        User.findById(id).then((response) => {
+            res.send(Object.assign(response,{count:response.logs.length}))
+        })
+    })
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
