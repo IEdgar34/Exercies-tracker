@@ -54,7 +54,7 @@ const User = mongoose.model("user",userSchema)
     app.post("/api/users/:_id/exercises",(req,res) => {
         let id = req.params._id
         let description = req.body.description
-        let duration = req.body.duration
+        let duration = +req.body.duration
         let date ;
         if(new Date(req.body.date) instanceof Date && !isNaN(new Date(req.body.date))){
            date =  new Date(req.body.date).toDateString()
