@@ -41,7 +41,7 @@ const User = mongoose.model("user",userSchema)
       User.find({}).then(resp => console.log(resp.map((item) => {
         return {
           name: item.name,
-          _id: item._id
+          _id: item._id.toHexString()
         }
       })))
     })
