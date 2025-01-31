@@ -57,10 +57,11 @@ const User = mongoose.model("user",userSchema)
         let duration = req.body.duration
         let date ;
         if(new Date(req.body.date) instanceof Date && !isNaN(new Date(req.body.date))){
-           date =  new Date(req.body.date)
+           date =  new Date(req.body.date).toDateString()
         }else{
-            date = new Date()
+            date = new Date().toDateString()
         }
+       
         User.findById(id).then((response) => {
             response.logs.push({
                 description: description,
