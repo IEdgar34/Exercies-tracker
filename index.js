@@ -4,6 +4,7 @@ const cors = require('cors')
 require('dotenv').config()
 const mongoose = require("mongoose")
 const bodyParser = require('body-parser')
+const { type } = require('express/lib/response')
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors())
 app.use(express.static('public'))
@@ -15,10 +16,11 @@ mongoose.connect(process.env.MONGO_URI,{ useNewUrlParser: true, useUnifiedTopolo
 
 
 const userSchema =  new mongoose.Schema({
-  name: { type: String, required: true},
-  description: { type: String }, 
+  username: { type: String, required: true},
+  /* description: { type: String }, 
   duration: { type: Number }, 
-  date: { type:String}
+  date: { type:String} */
+  logs: {type : Array}
   
 })
 //модель по схеме
@@ -26,10 +28,10 @@ const User = mongoose.model("user",userSchema)
 
 
     app.post('/api/users',(req,res) => {
-      let pers = new User({name:req.body.username})
+      let pers = new User({username:req.body.username})
        pers.save().then(response => {
         res.json({
-          username: response.name,
+          username: response.username,
           _id: response._id
         })
        }).catch(err => console.log(err))
@@ -40,11 +42,10 @@ const User = mongoose.model("user",userSchema)
         User.find({}).then(resp => {
             let arr = resp.map((item) => {
                 return {
-                    username: item.name,
+                    username: item.username,
                     _id: item._id.toHexString()
                 }
             })
-            console.log(arr)
             res.send(arr)
         }).catch(err => console.log(err))
     })
@@ -61,20 +62,30 @@ const User = mongoose.model("user",userSchema)
         }else{
             date = new Date()
         }
-        User.findByIdAndUpdate(
-            {_id: id},
-            {
+         User.findById(
+            id,
+            /* {
                 description: description,
                 duration: duration,
                 date: date,
             }, 
-            { new: true,runValidators: true  }
+            { new: true,runValidators: true  } */
         ).then((response) => {
-            res.send(response)
+            response.logs.push({
+                description: description,
+                duration: duration,
+                date: date,
+            })
+            response.save().then((resp) => res.send(resp))
+          
         }).catch((err) => console.log(err))
       
     })
 
+
+    app.get("/api/users/:_id/logs",(req,res) => {
+
+    })
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
