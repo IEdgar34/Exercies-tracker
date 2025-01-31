@@ -57,20 +57,11 @@ const User = mongoose.model("user",userSchema)
         let duration = req.body.duration
         let date ;
         if(new Date(req.body.date) instanceof Date && !isNaN(new Date(req.body.date))){
-
            date =  new Date(req.body.date)
         }else{
             date = new Date()
         }
-         User.findById(
-            id,
-            /* {
-                description: description,
-                duration: duration,
-                date: date,
-            }, 
-            { new: true,runValidators: true  } */
-        ).then((response) => {
+        User.findById(id).then((response) => {
             response.logs.push({
                 description: description,
                 duration: duration,
@@ -78,22 +69,23 @@ const User = mongoose.model("user",userSchema)
             })
             
             response.save().then((resp) => console.log(resp))
-            res.send({
+            let r = {
                 username:response.username,
                 description: description,
                 duration: duration,
                 date: date,
                 _id:response._id
-            })
+            }
+            res.send(r)
           
         }).catch((err) => console.log(err))
       
     })
 
 
-    app.get("/api/users/:_id/logs",(req,res) => {
+   /*  app.get("/api/users/:_id/logs",(req,res) => {
 
-    })
+    }) */
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
