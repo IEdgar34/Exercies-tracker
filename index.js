@@ -38,12 +38,16 @@ const User = mongoose.model("user",userSchema)
     })
     app.get("/api/users" ,(req,res) => {
      
-      User.find({}).then(resp => console.log(resp.map((item) => {
-        return {
-          username: item.name,
-          _id: item._id.toHexString()
-        }
-      })))
+        User.find({}).then(resp => {
+            let arr = resp.map((item) => {
+                return {
+                    username: item.name,
+                    _id: item._id.toHexString()
+                }
+            })
+            console.log(arr)
+            res.send(arr)
+        }).catch(err => console.log(err))
     })
 
 
