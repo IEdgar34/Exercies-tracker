@@ -22,7 +22,7 @@ const userSchema =  new mongoose.Schema({
   date: { type:String} */
   logs: {type : Array}
   
-})
+},{ strict: false })
 //модель по схеме
 const User = mongoose.model("user",userSchema)
 
@@ -76,7 +76,12 @@ const User = mongoose.model("user",userSchema)
                 duration: duration,
                 date: date,
             })
-            response.save().then((resp) => res.send(resp))
+            res.send(Object.assign({_id:response._id,username:response.username},{
+                description: description,
+                duration: duration,
+                date: date,
+            }))
+            response.save().then((resp) => console.log(resp))
           
         }).catch((err) => console.log(err))
       
